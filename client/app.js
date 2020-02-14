@@ -9,28 +9,17 @@ class Model {
     }
 
     _commit(todos = this.todos) {
+        var self = this;
         this.onTodoListChanged(
-            todos.filter(todo => {
-                if (this.filter == "0") return true;
-                return this.filter == "1" ? !todo.complete : todo.complete;
+            todos.filter(function(todo) {
+                if (self.filter == "0") return true;
+                return self.filter == "1" ? !todo.complete : todo.complete;
             })
         );
         localStorage.setItem("todos", JSON.stringify(todos));
     }
 
     uploadTodo() {
-        let todos = JSON.stringify(JSON.parse(localStorage.getItem("todos")));
-        if (todos == "[]") return alert("There's nothing to save.");
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                alert("Saved successfully!");
-            }
-        };
-        xhr.open("POST", "write", true);
-        xhr.setRequestHeader("Content-Type", "application/json");
-        xhr.send(todos);
-
         this._commit(this.todos);
     }
 
@@ -131,17 +120,19 @@ class View {
     }
 
     displayTodos(todos) {
+        var self = this;
         // Faster way for clear tasks
         while (this.list.firstChild) {
             this.list.removeChild(this.list.firstChild);
         }
 
         if (todos.length !== 0) {
-            todos.forEach(todo => {
-                var li = this.createElement("li", "task"),
-                    span = this.createElement("span"),
-                    remove = this.createElement("button", "remove"),
-                    tooltip = this.createElement("span", "tooltiptext");
+            var self = this;
+            todos.forEach(function(todo) {
+                var li = self.createElement("li", "task"),
+                    span = self.createElement("span"),
+                    remove = self.createElement("button", "remove"),
+                    tooltip = self.createElement("span", "tooltiptext");
 
                 li.id = todo.id;
                 span.textContent = todo.text;
@@ -151,12 +142,12 @@ class View {
                 tooltip.textContent = "delete";
                 remove.append(tooltip);
 
-                var checkbox = this.createElement("input");
+                var checkbox = self.createElement("input");
                 checkbox.type = "checkbox";
                 checkbox.checked = todo.complete;
 
                 if (todo.complete) {
-                    var strike = this.createElement("s");
+                    var strike = self.createElement("s");
                     strike.textContent = todo.text;
                     span.innerHTML = "";
                     span.contentEditable = false;
@@ -169,18 +160,19 @@ class View {
 
                 li.append(checkbox, span, remove);
 
-                this.list.append(li);
+                self.list.append(li);
             });
         }
     }
 
     bindAddTodo(handler) {
-        this.form.addEventListener("submit", e => {
+        var self = this;
+        this.form.addEventListener("submit", function(e) {
             e.preventDefault();
 
-            if (this._todoText) {
-                handler(this._todoText);
-                this._resetInput();
+            if (self._todoText) {
+                handler(self._todoText);
+                self._resetInput();
             } else {
                 return alert("Please enter a task");
             }
@@ -188,7 +180,7 @@ class View {
     }
 
     bindDeleteTodo(handler) {
-        this.list.addEventListener("click", e => {
+        this.list.addEventListener("click", function(e) {
             if (e.target.classList.contains("remove")) {
                 var id = +e.target.parentElement.id;
 
@@ -198,33 +190,35 @@ class View {
     }
 
     _initLocalListeners() {
-        this.list.addEventListener("input", e => {
+        var self = this;
+        this.list.addEventListener("input", function(e) {
             if (e.target.className == "span") {
-                this._temporaryTodoText = e.target.innerHTML;
+                self._temporaryTodoText = e.target.innerHTML;
             }
         });
     }
 
     bindEditTodo(handler) {
-        this.list.addEventListener("focusout", event => {
-            if (this._temporaryTodoText) {
+        var self = this;
+        this.list.addEventListener("focusout", function(event) {
+            if (self._temporaryTodoText) {
                 var id = +event.target.parentElement.id;
 
-                handler(id, this._temporaryTodoText);
-                this._temporaryTodoText = "";
+                handler(id, self._temporaryTodoText);
+                self._temporaryTodoText = "";
             }
         });
     }
 
     bindUploadTodo(handler) {
-        this.upload.addEventListener("click", () => {
+        this.upload.addEventListener("click", function() {
             var e = localStorage.getItem("key");
             handler(e);
         });
     }
 
     bindToggleTodo(handler) {
-        this.list.addEventListener("change", event => {
+        this.list.addEventListener("change", function(event) {
             if (event.target.type === "checkbox") {
                 var id = +event.target.parentElement.id;
 
@@ -234,10 +228,11 @@ class View {
     }
 
     bindFilterTodo(handler) {
-        this.filterBtnS.addEventListener("click", e => {
+        var self = this;
+        this.filterBtnS.addEventListener("click", function(e) {
             var filter = e.target.getAttribute("value");
             if (filter == null) return false;
-            this._changePage(filter);
+            self._changePage(filter);
 
             handler(filter);
         });
@@ -269,43 +264,54 @@ class Controller {
         this.model = model;
         this.view = view;
 
-        this.model.bindTodoListChanged(this.onTodoListChanged);
-        this.view.bindAddTodo(this.handleAddTodo);
-        this.view.bindDeleteTodo(this.handleDeleteTodo);
-        this.view.bindEditTodo(this.handleEditTodo);
-        this.view.bindToggleTodo(this.handleToggleTodo);
-        this.view.bindFilterTodo(this.handleFilterTodo);
-        this.view.bindUploadTodo(this.handleUploadTodo);
+        this.model.bindTodoListChanged(this.onTodoListChanged.bind(this));
+        this.view.bindAddTodo(this.handleAddTodo.bind(this));
+        this.view.bindDeleteTodo(this.handleDeleteTodo.bind(this));
+        this.view.bindEditTodo(this.handleEditTodo.bind(this));
+        this.view.bindToggleTodo(this.handleToggleTodo.bind(this));
+        this.view.bindFilterTodo(this.handleFilterTodo.bind(this));
+        this.view.bindUploadTodo(this.handleUploadTodo.bind(this));
 
         this.onTodoListChanged(this.model.todos);
     }
 
-    onTodoListChanged = todos => {
+    onTodoListChanged = function(todos) {
         this.view.displayTodos(todos);
     };
 
-    handleAddTodo = todoText => {
+    handleAddTodo = function(todoText) {
         this.model.addTodo(todoText);
     };
 
-    handleDeleteTodo = id => {
+    handleDeleteTodo = function(id) {
         this.model.deleteTodo(id);
     };
 
-    handleEditTodo = (id, todoText) => {
+    handleEditTodo = function(id, todoText) {
         this.model.editTodo(id, todoText);
     };
 
-    handleToggleTodo = id => {
+    handleToggleTodo = function(id) {
         this.model.toggleTodo(id);
     };
 
-    handleFilterTodo = filter => {
+    handleFilterTodo = function(filter) {
         this.model.filterTodo(filter);
     };
 
-    handleUploadTodo = () => {
+    handleUploadTodo = function() {
         this.model.uploadTodo();
+        let todos = JSON.stringify(JSON.parse(localStorage.getItem("todos")));
+        if (todos == "[]") return alert("There's nothing to save");
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                alert("Saved successfully!");
+            }
+        };
+        xhr.open("POST", "write", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(todos);
     };
 }
 
