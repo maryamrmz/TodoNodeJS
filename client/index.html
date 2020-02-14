@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Todo App</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+
+    <body>
+        <div id="main">
+            <h2>Task List</h2>
+            <form id="taskForm">
+                <input
+                    id="taskInput"
+                    placeholder="New task..."
+                    autocomplete="off"
+                />
+                <input class="submit" type="submit" value="Add Task" />
+            </form>
+            <div id="filterButtons" class="buttons">
+                <div class="all" value="0">All</div>
+                <div class="active" value="1">Active</div>
+                <div class="complete" value="2">Completed</div>
+            </div>
+            <div class="data">
+                <div class="upload">Upload</div>
+                <div class="download">Download</div>
+            </div>
+            <ul id="taskList"></ul>
+        </div>
+
+        <script src="app.js"></script>
+    </body>
+</html>
