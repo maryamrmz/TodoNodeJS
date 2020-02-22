@@ -9,9 +9,7 @@ module.exports.routeHandlers = function(req, res) {
         routes = rootHandler;
     } else if (req.method === "POST" && req.url === "/write") {
         routes = writeHandler;
-    }
-
-    if (!routes) {
+    } else {
         routes = staticHandler;
     }
 
