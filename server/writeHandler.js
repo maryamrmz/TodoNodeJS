@@ -1,6 +1,8 @@
+var fs = require("fs");
+
 module.exports.writeHandler = function(req, res) {
     req.on("data", function(data) {
-        fs.writeFile("../todos.txt", data, function(err) {
+        fs.writeFile("./todos.txt", data, function(err) {
             if (err) throw err;
         });
     });

@@ -1,5 +1,5 @@
 var http = require("http"),
-    routeHandlers = require("./handlers").routeHandlers;
+    routeHandlers = require("./server/handlers").routeHandlers;
 
 var server = http.createServer(routeHandlers);
 
