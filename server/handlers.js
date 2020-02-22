@@ -3,14 +3,13 @@ var rootHandler = require("./rootHandler").rootHandler,
     staticHandler = require("./staticHandler").staticHandler;
 
 module.exports.routeHandlers = function(req, res) {
-    var routes = {
-        GET: {
-            "/": rootHandler
-        },
-        POST: {
-            "/write": writeHandler
-        }
-    }[req.method][req.url];
+    var routes;
+
+    if (req.method === "GET" && req.url === "/") {
+        routes = rootHandler;
+    } else if (req.method === "POST" && req.url === "/write") {
+        routes = writeHandler;
+    }
 
     if (!routes) {
         routes = staticHandler;
