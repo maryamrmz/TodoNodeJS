@@ -1,6 +1,6 @@
 var rootHandler = require("./rootHandler").rootHandler,
     writeHandler = require("./writeHandler").writeHandler,
-    staticHandler = require("./staticHandler").staticHandler;
+    staticFilesHandler = require("./staticFilesHandler").staticFilesHandler;
 
 module.exports.routeHandlers = function(req, res) {
     var routes;
@@ -10,7 +10,7 @@ module.exports.routeHandlers = function(req, res) {
     } else if (req.method === "POST" && req.url === "/write") {
         routes = writeHandler;
     } else {
-        routes = staticHandler;
+        routes = staticFilesHandler;
     }
 
     routes(req, res);

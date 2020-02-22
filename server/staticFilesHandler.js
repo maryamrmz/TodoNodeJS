@@ -1,6 +1,6 @@
 var fs = require("fs");
 
-module.exports.staticHandler = function(req, res) {
+module.exports.staticFilesHandler = function(req, res) {
     fs.readFile("./client/" + req.url, function(err, content) {
         if (err) {
             res.writeHead(404, {
