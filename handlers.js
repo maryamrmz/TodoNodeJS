@@ -1,12 +1,13 @@
-var server = require("./server");
+var rootHandler = require("./server/rootHandler").rootHandler,
+    writeHandler = require("./server/writeHandler").writeHandler;
 
 module.exports.routeHandlers = function(req, res) {
     var routes = {
         GET: {
-            "/": server.rootHandler
+            "/": rootHandler
         },
         POST: {
-            "/write": server.writeHandler
+            "/write": writeHandler
         }
     }[req.method][req.url];
 
