@@ -1,7 +1,7 @@
 var http = require("http"),
-    handler = require("./server/handler").handler;
+    routeHandlers = require("./handlers").routeHandlers;
 
-var server = http.createServer(handler);
+var server = http.createServer(routeHandlers);
 
 var PORT = process.env.PORT || 8000;
 
