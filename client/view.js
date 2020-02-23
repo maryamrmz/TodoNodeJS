@@ -132,6 +132,9 @@ function changePages(event) {
 }
 
 upload.addEventListener("click", function() {
-    var e = localStorage.getItem("key");
     uploadTodos();
+});
+
+download.addEventListener("click", function() {
+    downloadTodos();
 });
