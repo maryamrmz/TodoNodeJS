@@ -78,6 +78,20 @@ function uploadTodos() {
     xhr.send(todos);
 }
 
+function downloadTodos() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            var data = xhr.responseText;
+            localStorage.setItem("todos", data);
+            init();
+            alert("Replaced Successfully!");
+        }
+    };
+    xhr.open("GET", "read", true);
+    xhr.send();
+}
+
 function init() {
     (todos = JSON.parse(localStorage.getItem("todos")) || []), (filter = "0");
 
